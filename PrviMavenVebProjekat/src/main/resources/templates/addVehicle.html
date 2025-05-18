@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{vehicles.title}">Vehicles</title>
+    <base th:href="@{/}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        header {
+            background-color: #06324f;
+            padding: 10px;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        table {
+            margin: 50px auto 0 auto; /* Centriranje tabele i dodavanje razmaka na vrhu */
+        }
+
+        form {
+            max-width: 600px; /* Ograničenje širine forme */
+            margin: 0 auto; /* Centriranje forme */
+            margin-top: 100px; /* Dodavanje razmaka od vrha */
+        }
+
+        body {
+            padding-top: 70px; /* Dodavanje razmaka kako bi sadržaj bio ispod zaglavlja */
+        }
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .card-header, .card-text {
+            text-align: center; /* Postavite tekst na centar */
+        }
+
+    </style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}"  alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels/add}" class="text-white" th:text="#{travels.add}">Add Travel</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/accUnits}" class="text-white" th:text="#{accommodationUnits.link}">Acc. Units</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}"  alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+        </button>
+    </div>
+</header>
+<h2 class="card-header" th:text="#{add.vehicle}">Add Vehicle</h2>
+<form method="post" th:action="@{/vehicles/add}">
+    <div class="form-group">
+        <label for="finalDestination" th:text="#{table.city}">City:</label>
+        <select class="form-control" id="finalDestination" name="finalDestinationId" required>
+            <!-- Dinamički generisane opcije za destinacije -->
+            <option th:each="destinacija : ${destinacije}"
+                    th:value="${destinacija.id}"
+                    th:text="${destinacija.grad}"></option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="name" th:text="#{table.name}">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="numberOfSeats" th:text="#{table.numberOfSeats}">Number of Seats:</label>
+        <input type="number" class="form-control" id="numberOfSeats" name="numberOfSeats" required>
+    </div>
+
+    <div class="form-group">
+        <label for="descriptions" th:text="#{table.description}">Description:</label>
+        <textarea class="form-control" id="descriptions" name="descriptions" rows="3" required></textarea>
+    </div>
+
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-custom" th:text="#{submit.button}">Add Vehicle</button>
+    </div>
+</form>
+<div th:if="${errorMessage}" class="alert alert-danger">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<footer>
+    © 2024 Travel agency
+</footer>
+</body>
+
+</html>

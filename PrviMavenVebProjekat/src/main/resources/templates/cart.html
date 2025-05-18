@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{cart.title}">Your Cart</title>
+    <base th:href="@{/}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <style>
+        header {
+            background-color: #AB98B1;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .container {
+            margin-top: 100px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .table-responsive {
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            display: block;
+            margin: 20px auto;
+            width: 150px;
+        }
+
+        .home-icon, .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .btn-custom {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+    </div>
+
+    <div class="d-flex align-items-center">
+    </div>
+</header>
+
+<div class="container">
+    <h2 th:text="#{cart.title}">Your Cart</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th th:text="#{cart.travelId}">Travel ID</th>
+                <th th:text="#{cart.destination}">Destination</th>
+                <th th:text="#{cart.departureDate}">Departure Date</th>
+                <th th:text="#{cart.returnDate}">Return Date</th>
+                <th th:text="#{cart.vehicle}">Vehicle</th>
+                <th th:text="#{cart.accommodation}">Accommodation</th>
+                <th th:text="#{cart.nights}">Nights</th>
+                <th th:text="#{cart.unitPrice}">Unit Price</th>
+                <th th:text="#{cart.passengers}">Passengers</th>
+                <th th:text="#{cart.totalPrice}">Total Price</th>
+                <th th:text="#{cart.usePoints}">Use Points</th>
+                <th th:text="#{cart.remove}">Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cartItem : ${cartItems}">
+                <td th:text="${cartItem.travelId}">Travel ID</td>
+                <td th:text="${cartItem.destinationCity}">Destination</td>
+                <td th:text="${#temporals.format(cartItem.departureDate, 'yyyy-MM-dd')}">Departure Date</td>
+                <td th:text="${#temporals.format(cartItem.returnDate, 'yyyy-MM-dd')}">Return Date</td>
+                <td th:text="${cartItem.vehicleName}">Vehicle</td>
+                <td th:text="${cartItem.accommodationName}">Accommodation</td>
+                <td th:text="${cartItem.numberOfNights}">Nights</td>
+                <td th:text="${cartItem.unitPrice}">Unit Price</td>
+                <td>
+                    <form th:action="@{/cart/updatePassengers}" method="post">
+                        <input type="hidden" name="travelId" th:value="${cartItem.travelId}" />
+                        <input type="number" name="numberOfPassengers" min="1" th:value="${cartItem.numberOfPassengers}" onchange="this.form.submit()" />
+                    </form>
+                </td>
+                <td th:text="${cartItem.totalPrice}">Price</td>
+                <td>
+                    <form th:action="@{/cart/updatePoints}" method="post">
+                        <input type="hidden" name="travelId" th:value="${cartItem.travelId}" />
+                        <input type="number" name="points" min="0" max="${loyaltyPoints}" th:value="${cartItem.usedPoints}" onchange="this.form.submit()" />
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/cart/remove}" method="post">
+                        <input type="hidden" name="travelId" th:value="${cartItem.travelId}" />
+                        <button type="submit" class="btn btn-danger" th:text="#{cart.remove}">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <h4>Total Price: <span th:text="${totalPrice}">0</span></h4>
+        <h5 th:text="#{cart.loyaltyPoints}">Loyalty Points: <span th:text="${loyaltyPoints}">0</span></h5>
+    </div>
+
+    <form th:action="@{/cart/sendAllRequests}" method="post">
+        <button type="submit" class="btn btn-success" th:text="#{cart.sendAllRequests}">Send All Requests</button>
+    </form>
+
+    <form th:action="@{/cart/clear}" method="post">
+        <button type="submit" class="btn btn-danger" th:text="#{cart.clearCart}">Clear Cart</button>
+    </form>
+
+    <div class="alert alert-danger" th:if="${errorMessage}">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+</div>
+<footer>
+    © 2024 Travel agency
+</footer>
+</body>
+</html>

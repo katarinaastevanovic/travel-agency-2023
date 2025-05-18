@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{login.title}">Login</title>
+    <base th:href="@{/}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <style>
+        header {
+            background-color: #AB98B1;
+            padding: 10px;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            background-color: #AB98B1;
+            color: #ffffff;
+            width: 300px;
+            margin: 0 auto;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        th, td {
+            border: none;
+            padding: 10px 0;
+        }
+
+        th {
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        td {
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border: none;
+            background-color: #f2f2f2;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 3px;
+            background-color: #81568F;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #042a42;
+        }
+
+        .center-div {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .card-text {
+            font-size: 0.875rem;
+        }
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}"  alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{login.users}" th:href="@{/users}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:text="#{login.addTravel}" th:href="@{/travels/add}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:text="#{login.travels}" th:href="@{/travels}" class="text-white"></a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{login.destinations}" th:href="@{/destinacije}" class="text-white"></a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{login.vehicles}" th:href="@{/vehicles}" class="text-white"></a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{login.accUnits}" th:href="@{/accUnits}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:text="#{login.loyaltyCard}" th:href="@{/loyaltyCard}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{login.loyaltyCards}" th:href="@{/loyaltyCardRequests}" class="text-white"></a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:text="#{login.login}" th:href="@{/users/loginForm}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:text="#{login.logout}" th:href="@{/users/logout}" class="text-white"></a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}"  alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:text="#{login.register}" th:href="@{/users/add}" class="text-white"></a>
+        </button>
+    </div>
+</header>
+
+<div class="center-div">
+    <form method="post" th:action="@{/users/login}">
+        <table>
+            <tr>
+                <th><label for="identifier" th:text="#{login.usernameEmail}"></label></th>
+                <td>
+                    <input type="text" id="identifier" name="identifier" required>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="password" th:text="#{login.password}"></label></th>
+                <td>
+                    <input type="password" id="password" name="password" required>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                    <input type="submit" th:value="#{login.loginButton}">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div th:if="${error}" class="error-message">
+        <p th:text="${errorMessage}"></p>
+    </div>
+</div>
+<footer>
+    © 2024 Travel agency
+</footer>
+</body>
+
+</html>

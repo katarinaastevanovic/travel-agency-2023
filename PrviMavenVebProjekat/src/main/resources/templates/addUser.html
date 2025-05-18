@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title th:text="#{users.title}">Users</title>
+	<base th:href="@{/}" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+		  crossorigin="anonymous">
+
+	<style>
+		header {
+			padding: 10px;
+		}
+
+		footer {
+			background-color: #AB98B1;
+			padding: 10px;
+			color: #ffffff;
+			text-align: center;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		th, td {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		table {
+			margin: 50px auto 0 auto;
+		}
+
+		form {
+			max-width: 600px;
+			margin: 0 auto;
+			margin-top: 150px;
+		}
+		.home-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.home-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+		.profile-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.profile-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+	<div>
+		<a th:href="@{/}" class="home-icon-link">
+			<img th:src="@{'/images/building.png'}"  alt="Home" class="home-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.users}" th:href="@{/users}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:text="#{users.travels}" th:href="@{/travels}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.destinations}" th:href="@{/destinacije}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.vehicles}" th:href="@{/vehicles}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.accUnits}" th:href="@{/accUnits}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:text="#{users.loyaltyCard}" th:href="@{/loyaltyCard}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.loyaltyCards}" th:href="@{/loyaltyCardRequests}" class="text-white"></a>
+		</button>
+	</div>
+
+	<div>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{users.login}" th:href="@{/users/loginForm}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+			<a th:text="#{users.logout}" th:href="@{/users/logout}" class="text-white"></a>
+		</button>
+		<a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+			<img th:src="@{'/images/profile.png'}"  alt="Profile" class="profile-icon">
+		</a>
+
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{users.register}" th:href="@{/users/add}" class="text-white"></a>
+		</button>
+	</div>
+</header>
+
+<form method="post" th:action="@{/users/add}">
+	<table>
+		<tr>
+			<th><label for="username" th:text="#{users.username}"></label></th>
+			<td><input type="text" id="username" name="username" required /></td>
+		</tr>
+		<tr>
+			<th><label for="password" th:text="#{users.password}"></label></th>
+			<td><input type="text" id="password" name="password" required /></td>
+		</tr>
+		<tr>
+			<th><label for="name" th:text="#{users.name}"></label></th>
+			<td><input type="text" id="name" name="name" required /></td>
+		</tr>
+		<tr>
+			<th><label for="lastName" th:text="#{users.lastName}"></label></th>
+			<td><input type="text" id="lastName" name="lastName" required /></td>
+		</tr>
+		<tr>
+			<th><label for="email" th:text="#{users.email}"></label></th>
+			<td><input type="email" id="email" name="email" required /></td>
+		</tr>
+		<tr>
+			<th><label for="dateOfBirth" th:text="#{users.dateOfBirth}"></label></th>
+			<td><input type="date" id="dateOfBirth" name="dateOfBirth" required /></td>
+		</tr>
+		<tr>
+			<th><label for="address" th:text="#{users.address}"></label></th>
+			<td><input type="text" id="address" name="address" required /></td>
+		</tr>
+		<tr>
+			<th><label for="number" th:text="#{users.number}"></label></th>
+			<td><input type="text" id="number" name="number" required /></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><input type="submit" th:value="#{users.registerButton}" /></td>
+		</tr>
+	</table>
+</form>
+<div th:if="${errorMessage}" class="alert alert-danger">
+	<p th:text="${errorMessage}"></p>
+</div>
+
+<footer>
+	© 2024 Travel agency
+</footer>
+</body>
+
+</html>

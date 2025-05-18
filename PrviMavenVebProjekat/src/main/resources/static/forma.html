@@ -1,0 +1,88 @@
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<base href="/PrviMavenVebProjekat/">
+	<title>Prihvatanje podataka iz formi</title>
+</head>
+<body>
+	Prihvatanje podataka koristeći HttpServletRequest<br />
+	/preuzmi1<br />
+	<form action="PrihvatanjePodataka/preuzmi1" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br /> 
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći @RequestParam anotaciju argumenata Handler Metode Metode<br />
+	/preuzmi2<br />
+	<form action="PrihvatanjePodataka/preuzmi2" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br /> 
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći @RequestParam anotaciju argumenata Handler Metode Metode, nedostaje jedan parametar forme<br />
+	/preuzmi2<br />
+	<form action="PrihvatanjePodataka/preuzmi2" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći @RequestParam anotaciju sa dodatnim opisom atributa name<br />
+	/preuzmi3<br />
+	<form action="PrihvatanjePodataka/preuzmi3" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br />
+		Pol:<input type="radio" name="pol" value="muški" checked/>
+			M<input type="radio" name="pol" value="ženski"/>Ž<br />
+		Plata:<input type="number" name="plata" min="1" value="1"/> <br />
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći @RequestParam anotaciju sa dodatnim opisom atributa name, required, defaultValue<br />
+	/preuzmi3<br />
+	<form action="PrihvatanjePodataka/preuzmi3" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br /> 
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći @RequestParam anotaciju i argumenta metode tipa Map &lt;String,String&gt;<br />
+	/preuzmi4<br />
+	<form action="PrihvatanjePodataka/preuzmi4" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br /> 
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+	
+	Prihvatanje podataka koristeći anotaciju @ModelAttribute<br />
+	/preuzmi5<br />
+	<form action="PrihvatanjePodataka/preuzmi5" method="get"
+		accept-charset="UTF-8">
+		Ime :<input type="text" name="ime" /> 
+		Prezime :<input type="text" name="prezime" /> <br />
+		Pol:<input type="radio" name="pol" value="muški" checked/>
+			M<input type="radio" name="pol" value="ženski"/>Ž<br />
+		Plata:<input type="number" name="plata" min="1" value="1"/> <br />
+		Visak:<input type="text" name="visak" value="text"/> <br />
+		<input type="submit" value="Posalji" />
+	</form>
+	<hr />
+</body>
+<a href="index.html">nazad</a>
+<body>
+
+</body>
+</html>

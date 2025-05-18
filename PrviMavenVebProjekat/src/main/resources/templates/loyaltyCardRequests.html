@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="#{user.overview.title}">User Overview</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <style>
+    header {
+      background-color: #AB98B1;
+      padding: 10px;
+      width: 100%;
+      position: fixed;
+    }
+
+    footer {
+      background-color: #AB98B1;
+      padding: 10px;
+      color: #ffffff;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .home-icon-link {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .home-icon {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
+
+    .profile-icon-link {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .profile-icon {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
+    .table-container {
+      margin-top: 100px;
+    }
+    .btn-custom-approve {
+      background-color: #83CD80;
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-custom-approve:hover {
+      background-color: #67A365;
+      color: #ffffff;
+    }
+
+    .btn-custom-reject {
+      background-color: #E29DDE;
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-custom-reject:hover {
+      background-color: #d68fd5;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+  <div>
+    <a th:href="@{/}" class="home-icon-link">
+      <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+    </a>
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+      <a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+    </button>
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+      <a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+    </button>
+
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+      <a th:href="@{/travels/add}" class="text-white" th:text="#{travels.add}">Add Travel</a>
+    </button>
+
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+      <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+    </button>
+
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+      <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+    </button>
+
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+      <a th:href="@{/accUnits}" class="text-white" th:text="#{accommodationUnits.link}">Acc. Units</a>
+    </button>
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+      <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+    </button>
+    <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+      <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+    </button>
+  </div>
+
+  <div>
+    <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+      <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+    </button>
+    <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+      <a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+    </button>
+    <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+      <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+    </a>
+
+    <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+      <a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+    </button>
+  </div>
+</header>
+
+<div class="table-container">
+  <h1 th:text="#{user.overview.title}">Pregled Korisnika</h1>
+
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th th:text="#{user.table.name}">Ime</th>
+      <th th:text="#{user.table.lastName}">Prezime</th>
+      <th th:text="#{user.table.email}">Email</th>
+      <th th:text="#{user.table.approve}">Odobri</th>
+      <th th:text="#{user.table.reject}">Odbij</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.name}"></td>
+      <td th:text="${user.lastName}"></td>
+      <td th:text="${user.email}"></td>
+      <td>
+        <form th:action="@{/loyaltyCardRequests/approve}" method="post">
+          <input type="hidden" name="userId" th:value="${user.id}" />
+          <button class="btn btn-custom-approve" type="submit" th:text="#{user.table.approve.button}">Odobri</button>
+        </form>
+      </td>
+      <td>
+        <form th:action="@{/loyaltyCardRequests/reject}" method="post">
+          <input type="hidden" name="userId" th:value="${user.id}" />
+          <button class="btn btn-custom-reject" type="submit" th:text="#{user.table.reject.button}">Odbij</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  © 2024 Travel agency
+</footer>
+</body>
+</html>

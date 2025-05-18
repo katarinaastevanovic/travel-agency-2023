@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title th:text="#{profile.title}">Profile</title>
+	<base th:href="@{/}">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+	<!-- Material Design Icons CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.6.95/css/materialdesignicons.css">
+
+	<style>
+		header {
+			padding: 10px;
+			width: 100%;
+			position: fixed;
+		}
+
+		/* Dodajte ovaj stil za promenu boje pozadine i teksta u footer-u */
+		footer {
+			background-color: #AB98B1;
+			padding: 10px;
+			color: #ffffff;
+			text-align: center;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		body {
+			background-color: #f9f9fa
+		}
+
+		.padding {
+			padding: 3rem !important
+		}
+
+		.user-card-full {
+			overflow: hidden;
+		}
+
+		.card {
+			border-radius: 5px;
+			-webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
+			box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
+			border: none;
+			margin-bottom: 30px;
+		}
+
+		.m-r-0 {
+			margin-right: 0px;
+		}
+
+		.m-l-0 {
+			margin-left: 0px;
+		}
+
+		.user-card-full .user-profile {
+			border-radius: 5px 0 0 5px;
+		}
+
+		.bg-c-lite-green {
+			background: -webkit-gradient(linear, left top, right top, from(#8EDFEA), to(#CF9DD6));
+			background: linear-gradient(to right, #CF9DD6, #8EDFEA);
+		}
+
+		.user-profile {
+			padding: 20px 0;
+		}
+
+		.card-block {
+			padding: 1.25rem;
+		}
+
+		.m-b-25 {
+			margin-bottom: 25px;
+		}
+
+		.img-radius {
+			border-radius: 5px;
+		}
+
+		h6 {
+			font-size: 14px;
+		}
+
+		.card .card-block p {
+			line-height: 25px;
+		}
+
+		@media only screen and (min-width: 1400px) {
+			p {
+				font-size: 14px;
+			}
+		}
+
+		.card-block {
+			padding: 1.25rem;
+		}
+
+		.b-b-default {
+			border-bottom: 1px solid #e0e0e0;
+		}
+
+		.m-b-20 {
+			margin-bottom: 20px;
+		}
+
+		.p-b-5 {
+			padding-bottom: 5px !important;
+		}
+
+		.card .card-block p {
+			line-height: 25px;
+		}
+
+		.m-b-10 {
+			margin-bottom: 10px;
+		}
+
+		.text-muted {
+			color: #919aa3 !important;
+		}
+
+		.b-b-default {
+			border-bottom: 1px solid #e0e0e0;
+		}
+
+		.f-w-600 {
+			font-weight: 600;
+		}
+
+		.m-t-40 {
+			margin-top: 20px;
+		}
+
+		.user-card-full .social-link li {
+			display: inline-block;
+		}
+
+		.user-card-full .social-link li a {
+			font-size: 20px;
+			margin: 0 10px 0 0;
+			-webkit-transition: all 0.3s ease-in-out;
+			transition: all 0.3s ease-in-out;
+		}
+
+		.home-icon-link {
+			display: inline-block;
+			text-decoration: none; /* Uklanja podvlačenje linka */
+		}
+
+		.home-icon {
+			width: 24px; /* Podešavanje širine ikone */
+			height: 24px; /* Podešavanje visine ikone */
+			vertical-align: middle; /* Poravnava ikonu sa tekstom */
+		}
+
+		.profile-icon-link {
+			display: inline-block;
+			text-decoration: none; /* Uklanja podvlačenje linka */
+		}
+
+		.profile-icon {
+			width: 24px; /* Podešavanje širine ikone */
+			height: 24px; /* Podešavanje visine ikone */
+			vertical-align: middle; /* Poravnava ikonu sa tekstom */
+		}
+
+		/* Dodati stilove za centriranje */
+		.container-center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+
+		.card {
+			max-width: 600px; /* Ograničite maksimalnu širinu kartice */
+			width: 100%; /* Kartica zauzima 100% dostupne širine */
+		}
+	</style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+	<div>
+		<a th:href="@{/}" class="home-icon-link">
+			<img th:src="@{'/images/building.png'}"  alt="Home" class="home-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{profile.users}" th:href="@{/users}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:text="#{profile.addTravel}" th:href="@{/travels/add}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:text="#{profile.travels}" th:href="@{/travels}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{profile.destinations}" th:href="@{/destinacije}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{profile.vehicles}" th:href="@{/vehicles}" class="text-white"></a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{profile.accUnits}" th:href="@{/accUnits}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:text="#{profile.loyaltyCard}" th:href="@{/loyaltyCard}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{profile.loyaltyCards}" th:href="@{/loyaltyCardRequests}" class="text-white"></a>
+		</button>
+	</div>
+	<div>
+		<form th:action="@{/changeLanguage}" method="get" class="language-form">
+			<select name="lang" class="form-control" onchange="this.form.submit()">
+				<option value="en" th:text="#{languageEnglish}" th:selected="${#locale.language == 'en'}">English</option>
+				<option value="sr" th:text="#{languageSerbian}" th:selected="${#locale.language == 'sr'}">Srpski</option>
+			</select>
+		</form>
+	</div>
+	<div>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{profile.login}" th:href="@{/users/loginForm}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+			<a th:text="#{profile.logout}" th:href="@{/users/logout}" class="text-white"></a>
+		</button>
+		<a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+			<img th:src="@{'/images/profile.png'}"  alt="Profile" class="profile-icon">
+		</a>
+
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{profile.register}" th:href="@{/users/add}" class="text-white"></a>
+		</button>
+	</div>
+</header>
+
+<br>
+
+<div class="container-center">
+	<div class="card user-card-full">
+		<div class="row m-l-0 m-r-0">
+			<div class="col-sm-4 bg-c-lite-green user-profile">
+				<div class="card-block text-center text-white">
+					<div class="m-b-25">
+						<img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius"
+							 alt="User-Profile-Image">
+					</div>
+					<h6 class="f-w-600" th:text="${session.LOGGED_IN_USER.username}"></h6>
+					<button id="editButton" class="btn btn-light" th:attr="data-userid=${session.LOGGED_IN_USER.id}" onclick="editProfile()" th:text="#{profile.edit}"></button>
+					<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-light">
+						<a th:text="#{profile.wishList}" th:href="@{/wishList/wishLists}" style="text-decoration: none; color: inherit;"></a>
+					</button>
+					<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-light">
+						<a th:text="#{profile.purchases}" th:href="@{/reservations/userPurchases}" style="text-decoration: none; color: inherit;"></a>
+					</button>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="card-block">
+					<h6 class="m-b-20 p-b-5 b-b-default f-w-600" th:text="#{profile.information}">Information</h6>
+					<div class="row">
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.name}">Name</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.name}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.lastName}">Last Name</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.lastName}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.password}">Password</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.password}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.email}">Email</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.email}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.phone}">Phone</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.number}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.birthDate}">Birth Date</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.dateOfBirth}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.address}">Address</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.address}"></h6>
+						</div>
+						<div class="col-sm-6">
+							<p class="m-b-10 f-w-600" th:text="#{profile.number}">Number</p>
+							<h6 class="text-muted f-w-400" th:text="${session.LOGGED_IN_USER.number}"></h6>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<footer>
+	© 2024 Travel agency
+</footer>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+<script>
+	function editProfile() {
+		// Dobijte ID korisnika iz data-userid atributa
+		var userId = document.getElementById('editButton').getAttribute('data-userid');
+
+		// Otvorite formu za uređivanje korisnika sa trenutnim ID-om
+		window.location.href = "/PrviMavenVebProjekat/users/details?id=" + userId;
+	}
+</script>
+</html>

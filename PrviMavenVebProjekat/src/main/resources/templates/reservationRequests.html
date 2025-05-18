@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{reservationRequests.title}">Reservation Requests</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        header {
+            background-color: #AB98B1;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .card-img-top {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card-img-link {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card {
+            max-width: 250px;
+            margin: 10px;
+            border: 1px solid #dddddd;
+        }
+
+        .card-body {
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .card-text {
+            font-size: 0.75rem;
+        }
+
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .filter-sort-container {
+            margin-top: 120px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .filter-form {
+            text-align: left;
+        }
+
+        .sort-form {
+            text-align: right;
+        }
+
+        .custom-select {
+            width: auto;
+            display: inline-block;
+        }
+
+        .content {
+            margin-top: 80px;
+            margin-bottom: 60px;
+        }
+
+        .src-btn, .sort-btn {
+            background-color: #AB98B1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .container {
+            margin-top: 150px; /* Dodavanje prostora ispod zaglavlja */
+        }
+    </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels/add}" class="text-white" th:text="#{addTravel.link}">Add Travel</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/accUnits}" class="text-white" th:text="#{accUnits.link}">Acc. Units</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/cart/view}" class="text-white" th:text="#{shoppingCart.link}">Shopping Cart</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/reservations/requests}" class="text-white" th:text="#{reservationRequests.link}">Reservation Requests</a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+        </button>
+    </div>
+</header>
+
+<div class="container">
+    <h2 th:text="#{reservationRequests.title}">Reservation Requests</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th th:text="#{travelId.label}">Travel ID</th>
+            <th th:text="#{departureDate.label}">Departure Date</th>
+            <th th:text="#{returnDate.label}">Return Date</th>
+            <th th:text="#{finalPrice.label}">Final Price</th>
+            <th th:text="#{creationDate.label}">Creation Date</th>
+            <th th:text="#{numberOfPassengers.label}">Number of Passengers</th>
+            <th th:text="#{userId.label}">User ID</th>
+            <th th:text="#{approve.button}">Approve</th>
+            <th th:text="#{reject.button}">Reject</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="request : ${requests}">
+            <td th:text="${request.travelId}">Travel ID</td>
+            <td th:text="${request.departureDate}">Departure Date</td>
+            <td th:text="${request.returnDate}">Return Date</td>
+            <td th:text="${request.finalPrice}">Final Price</td>
+            <td th:text="${request.creationDate}">Creation Date</td>
+            <td th:text="${request.numberOfPassengers}">Number of Passengers</td>
+            <td th:text="${request.userId}">User ID</td>
+            <td>
+                <form th:action="@{/reservations/approve}" method="post">
+                    <input type="hidden" name="reservationId" th:value="${request.id}" />
+                    <input type="hidden" name="travelDateId" th:value="${request.travelDateId}" />
+                    <input type="hidden" name="numberOfPassengers" th:value="${request.numberOfPassengers}" />
+                    <button type="submit" class="btn btn-success" th:text="#{approve.button}">Approve</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/reservations/reject}" method="post">
+                    <input type="hidden" name="reservationId" th:value="${request.id}" />
+                    <button type="submit" class="btn btn-danger" th:text="#{reject.button}">Reject</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer class="text-center mt-5">
+    © 2024 Travel agency
+</footer>
+</body>
+</html>

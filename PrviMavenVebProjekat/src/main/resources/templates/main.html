@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title th:text="#{title}">Travel Agency</title>
+	<base th:href="@{/}">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+		  crossorigin="anonymous">
+
+	<style>
+		header {
+			background-color: #AB98B1;
+			padding: 10px;
+			width: 100%;
+			position: fixed;
+		}
+
+		footer {
+			background-color: #AB98B1;
+			padding: 10px;
+			color: #ffffff;
+			text-align: center;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		.card-img-top {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.card-img-link {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.card {
+			max-width: 250px;
+			margin: 10px;
+			border: 1px solid #dddddd;
+		}
+
+		.card-body {
+			padding: 10px;
+		}
+
+		.card-title {
+			font-size: 1rem;
+		}
+
+		.card-text {
+			font-size: 0.75rem;
+		}
+
+		.home-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.home-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.profile-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.profile-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.filter-sort-container {
+			margin-top: 120px;
+			margin-bottom: 20px;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.filter-form {
+			text-align: left;
+		}
+
+		.sort-form {
+			text-align: right;
+		}
+
+		.custom-select {
+			width: auto;
+			display: inline-block;
+		}
+
+		.content {
+			margin-top: 80px;
+			margin-bottom: 60px;
+		}
+
+		.src-btn, .sort-btn {
+			background-color: #AB98B1;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 13px;
+			margin: 10px 2px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+		. btn-custom-add-date{
+			background-color: #AB98B1;
+		}
+	</style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+	<div>
+		<a th:href="@{/}" class="home-icon-link">
+			<img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/users}" class="text-white" th:text="#{users}">Users</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:href="@{/travels}" class="text-white" th:text="#{travels}">Travels</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:href="@{/travels/add}" class="text-white" th:text="#{addTravel}">Add Travel</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/destinacije}" class="text-white" th:text="#{destinations}">Destinations</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles}">Vehicles</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/accUnits}" class="text-white" th:text="#{accUnits}">Acc. Units</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard}">Loyalty Card</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCards}">Loyalty Cards</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:href="@{/cart/view}" class="text-white" th:text="#{shoppingCart}">Shopping Cart</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:href="@{/reservations/requests}" class="text-white" th:text="#{reservationRequests}">Reservation Requests</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/reports}" class="text-white" th:text="#{reports}">Reports</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" type="button" class="btn btn-custom" data-toggle="modal" data-target="#specialDatesModal">
+			<span th:text="#{specialDates}" class="text-white">Special Dates</span>
+		</button>
+
+	</div>
+	<div>
+		<form th:action="@{/changeLanguage}" method="get" class="language-form">
+			<select name="lang" class="form-control" onchange="this.form.submit()">
+				<option value="en" th:text="#{languageEnglish}" th:selected="${#locale.language == 'en'}">English</option>
+				<option value="sr" th:text="#{languageSerbian}" th:selected="${#locale.language == 'sr'}">Srpski</option>
+			</select>
+		</form>
+	</div>
+
+	<div>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:href="@{/users/loginForm}" class="text-white" th:text="#{login}">Login</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+			<a th:href="@{/users/logout}" class="text-white" th:text="#{logout}">Logout</a>
+		</button>
+		<a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+			<img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+		</a>
+
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:href="@{/users/add}" class="text-white" th:text="#{register}">Register</a>
+		</button>
+	</div>
+</header>
+
+<div class="container content">
+	<div class="filter-sort-container">
+		<!-- Filtriranje -->
+		<div class="filter-form">
+			<form th:action="@{/}" method="get" class="form-inline">
+				<div class="form-group mb-2">
+					<input type="text" name="destinationCity" id="destinationCity" class="form-control" th:placeholder="#{destination}">
+				</div>
+				<div class="form-group mb-2">
+					<select name="typeOfAccommodationUnit" id="typeOfAccommodationUnit" class="form-control custom-select">
+						<option value="" disabled selected th:text="#{accommodationUnit}">Accommodation Unit</option>
+						<option th:each="type : ${T(com.ftn.PrviMavenVebProjekat.model.TypeOfAccommodationUnit).values()}"
+								th:value="${type.name()}" th:text="${type.name()}"></option>
+					</select>
+				</div>
+				<div class="form-group mb-2 ml-3">
+					<select name="typeOfTravel" id="typeOfTravel" class="form-control custom-select">
+						<option value="" disabled selected th:text="#{typeOfTravel}">Type of Travel</option>
+						<option th:each="type : ${T(com.ftn.PrviMavenVebProjekat.model.TypeOfTravel).values()}"
+								th:value="${type.name()}" th:text="${type.name()}"></option>
+					</select>
+				</div>
+				<div class="form-group mb-2 ml-3">
+					<select name="typeOfVehicle" id="typeOfVehicle" class="form-control custom-select">
+						<option value="" disabled selected th:text="#{typeOfVehicle}">Type of Vehicle</option>
+						<option th:each="type : ${T(com.ftn.PrviMavenVebProjekat.model.TypeOfVehicle).values()}"
+								th:value="${type.name()}" th:text="${type.name()}"></option>
+					</select>
+				</div>
+				<div class="form-group mb-2">
+					<label for="priceFrom" class="sr-only" th:text="#{priceFromLabel}">Price from:</label>
+					<input type="number" name="priceFrom" id="priceFrom" class="form-control" th:placeholder="#{priceFrom}">
+				</div>
+				<div class="form-group mb-2 ml-3">
+					<label for="priceTo" class="sr-only" th:text="#{priceToLabel}">Price to:</label>
+					<input type="number" name="priceTo" id="priceTo" class="form-control" th:placeholder="#{priceTo}">
+				</div>
+				<div class="form-group mb-2">
+					<label for="dateFrom" class="sr-only" th:text="#{dateFromLabel}">Date from:</label>
+					<input type="date" name="dateFrom" id="dateFrom" class="form-control" th:placeholder="#{dateFrom}">
+				</div>
+				<div class="form-group mb-2 ml-3">
+					<label for="dateTo" class="sr-only" th:text="#{dateToLabel}">Date to:</label>
+					<input type="date" name="dateTo" id="dateTo" class="form-control" th:placeholder="#{dateTo}">
+				</div>
+				<div class="form-group mb-2">
+					<label for="minNights" class="sr-only" th:text="#{minNightsLabel}">Min Nights:</label>
+					<input type="number" name="minNights" id="minNights" class="form-control" th:placeholder="#{minNights}">
+				</div>
+				<div class="form-group mb-2 ml-3">
+					<label for="maxNights" class="sr-only" th:text="#{maxNightsLabel}">Max Nights:</label>
+					<input type="number" name="maxNights" id="maxNights" class="form-control" th:placeholder="#{maxNights}">
+				</div>
+				<div class="form-group mb-2">
+					<label for="minFreeSeats" class="sr-only" th:text="#{minFreeSeatsLabel}">Number Of Passengers:</label>
+					<input type="number" name="minFreeSeats" id="minFreeSeats" class="form-control" th:placeholder="#{minFreeSeats}">
+				</div>
+				<div th:if="${session.LOGGED_IN_USER != null && (session.LOGGED_IN_USER.isAdmin() || session.LOGGED_IN_USER.isManager())}" class="form-group mb-2">
+					<label for="travelId" class="sr-only" th:text="#{travelIdLabel}">Travel ID:</label>
+					<input type="number" name="travelId" id="travelId" class="form-control" th:placeholder="#{travelId}">
+				</div>
+
+				<button type="submit" class="src-btn" th:text="#{filterButton}">Filter</button>
+			</form>
+		</div>
+
+		<!-- Sortiranje -->
+		<div class="sort-form">
+			<form th:action="@{/}" method="get" class="form-inline">
+				<div class="form-group mb-2">
+					<label for="sortBy" class="sr-only" th:text="#{sortByLabel}">Sort By:</label>
+					<select name="sortBy" id="sortBy" class="form-control custom-select">
+						<option value="" disabled selected th:text="#{sortBy}">Sort By</option>
+						<option value="price" th:text="#{price}">Price</option>
+						<option value="dateFrom" th:text="#{dateFrom}">Date From</option>
+						<option value="dateTo" th:text="#{dateTo}">Date To</option>
+						<option value="destinationCity" th:text="#{destinationCity}">Destination City</option>
+						<option value="typeOfAccommodationUnit" th:text="#{accommodationUnit}">Accommodation Unit</option>
+						<option value="typeOfTravel" th:text="#{typeOfTravel}">Type of Travel</option>
+						<option value="typeOfVehicle" th:text="#{typeOfVehicle}">Type of Vehicle</option>
+					</select>
+				</div>
+
+				<div class="form-group mb-2 ml-3">
+					<label for="sortOrder" class="sr-only" th:text="#{sortOrderLabel}">Sort Order:</label>
+					<select name="sortOrder" id="sortOrder" class="form-control custom-select">
+						<option value="" disabled selected th:text="#{sortOrder}">Order</option>
+						<option value="asc" th:text="#{ascending}">Ascending</option>
+						<option value="desc" th:text="#{descending}">Descending</option>
+					</select>
+				</div>
+
+				<button type="submit" class="sort-btn" th:text="#{sortButton}">Sort</button>
+			</form>
+		</div>
+	</div>
+	<!-- Modal Special Dates -->
+	<div class="modal fade" id="specialDatesModal" tabindex="-1" role="dialog" aria-labelledby="specialDatesModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="specialDatesModalLabel" th:text="#{specialDates.title}">Add Special Date</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="specialDatesForm" th:action="@{/specialDates/add}" method="post" class="needs-validation">
+						<div class="form-group">
+							<label for="startDate" th:text="#{specialDates.startDate}">Start Date:</label>
+							<input type="date" class="form-control" id="startDate" name="startDate" required>
+						</div>
+
+						<div class="form-group">
+							<label for="endDate" th:text="#{specialDates.endDate}">End Date:</label>
+							<input type="date" class="form-control" id="endDate" name="endDate">
+							<small class="form-text text-muted" th:text="#{specialDates.endDateNote}">
+								If end date is omitted, it will be considered as a single day.
+							</small>
+						</div>
+						<div class="form-group">
+							<!-- Combo box za izbor vrste putovanja -->
+							<label for="filterOptions" th:text="#{specialDates.filterOptions}">Filter Options:</label>
+							<select class="form-control" id="filterOptions" name="filterOptions" required>
+								<option value="" disabled selected th:text="#{selectOption}">Select an Option</option>
+								<option value="typesOfTravels" th:text="#{typesOfTravels}">Types of Travels</option>
+								<option value="dates" th:text="#{dates}">Dates</option>
+								<option value="allTravels" th:text="#{allTravels}">All Travels</option>
+							</select>
+
+						</div>
+
+
+						<div class="form-group">
+							<!-- Promenjen id atribut -->
+							<label for="modalTypeOfTravel" th:text="#{specialDates.typeOfTravel}">Type of Travel:</label>
+							<select class="form-control" id="modalTypeOfTravel" name="typeOfTravel">
+								<option value="" disabled selected th:text="#{selectTypeOfTravel}">Select Type of Travel</option>
+								<option th:each="type : ${typesOfTravel}" th:value="${type}" th:text="${type}"></option>
+							</select>
+
+						</div>
+
+						<div class="form-group">
+							<label th:text="#{specialDates.travel}">Select Travel Date:</label>
+
+							<div th:each="travelDate : ${travelDates}">
+								<input type="checkbox" name="travelDateIds" th:value="${travelDate.id}" th:id="'travel_' + ${travelDate.id}">
+								<label th:for="'travel_' + ${travelDate.id}">
+									<span th:text="${travelDate.id}"></span> - <!-- Ovo je ispravljeno -->
+									<span th:text="${#temporals.format(travelDate.arrivalDate, 'yyyy-MM-dd HH:mm')}"></span> to
+									<span th:text="${#temporals.format(travelDate.departureDate, 'yyyy-MM-dd HH:mm')}"></span>
+								</label>
+							</div>
+						</div>
+
+
+
+						<div class="form-group">
+							<label for="discount" th:text="#{specialDates.discount}">Discount (%):</label>
+							<input type="number" class="form-control" id="discount" name="discount" required min="0" max="100">
+						</div>
+
+
+
+						<!-- Ispravka dugmeta za slanje forme unutar modala -->
+						<button type="submit" class="btn btn-custom-add-date" th:text="#{specialDates.submitButton}">Add Special Date</button>
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div th:fragment="fragmentTravels" class="row" id="travelCards">
+		<div th:each="itTravel, status: ${travels}" class="col-lg-3 col-md-4 col-sm-6 mb-4 travel-card" data-destination="${itTravel.destinacija.grad}">
+			<div class="card">
+				<a th:href="@{'/details?id=' + ${itTravel.id}}">
+					<img th:src="@{'/images/' + ${itTravel.destinacija.slika}}" class="card-img-top card-img-link" alt="Slika putovanja">
+				</a>
+				<div class="card-body text-center">
+					<a th:href="@{'/details?id=' + ${itTravel.id}}">
+						<h5 class="card-title" th:text="${itTravel.destinacija.grad}"></h5>
+					</a>
+					<p class="card-text">
+						<span th:text="#{vehicle}">Vehicle:</span> <span th:text="${itTravel.vehicle.name}"></span><br>
+						<span th:text="#{accommodationUnit}">Accommodation Unit:</span> <span th:text="${itTravel.accUnit.typeOfAccommodationUnit}"></span><br>
+						<span th:text="#{typeOfTravel}">Type Of Travel:</span> <span th:text="${itTravel.typeOfTravel}"></span><br>
+
+						<!-- Prikaz cene -->
+						<span th:text="#{price}">Price:</span>
+					<div th:each="itDate : ${travelDates}">
+						<span th:if="${itDate.travelId == itTravel.id}">
+							<!-- Prikaz cene sa popustom ako postoji i ako nije nula -->
+							<span th:if="${itDate.discount != null && itDate.discount != 0}"
+								  th:text="${#numbers.formatDecimal((itDate.discountPrice / itDate.numberOfNights), 1, 2)}"></span>
+
+							<!-- Prikaz popusta -->
+							<span th:if="${itDate.discount != null && itDate.discount != 0}"
+								  th:text="'Discount: ' + ${itDate.discount} + '%'"></span>
+						</span>
+
+					</div>
+
+					<!-- Prikaz originalne cene ako nema popusta -->
+					<span th:if="${#lists.isEmpty(travelDates) or not #lists.contains(travelDates, itTravel)}" th:text="${itTravel.price}"></span> $
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<footer>
+	© 2024 Travel agency
+</footer>
+
+<!-- jQuery JavaScript -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+<!-- Custom JavaScript -->
+<script>
+	$(document).ready(function() {
+		// Dinamičko onemogućavanje elemenata na osnovu izbora u combo box-u
+		$('#filterOptions').change(function () {
+			var selectedOption = $(this).val();
+
+			if (selectedOption === 'typesOfTravels') {
+				$('#modalTypeOfTravel').prop('disabled', false);
+				$('input[name="travelDateIds"]').prop('disabled', true);
+			} else if (selectedOption === 'dates') {
+				$('#modalTypeOfTravel').prop('disabled', true);
+				$('input[name="travelDateIds"]').prop('disabled', false);
+			} else if (selectedOption === 'allTravels') {
+				$('#modalTypeOfTravel').prop('disabled', true);
+				$('input[name="travelDateIds"]').prop('disabled', true);
+			} else {
+				$('#modalTypeOfTravel').prop('disabled', false);
+				$('input[name="travelDateIds"]').prop('disabled', false);
+			}
+		});
+
+		// AJAX za slanje forme
+		$('#specialDatesForm').on('submit', function (event) {
+			event.preventDefault(); // Sprečava defaultno ponašanje slanja forme
+
+			// Prikupljanje podataka iz forme
+			var filterOptions = $('#filterOptions').val();
+			var startDate = $('#startDate').val();
+			var endDate = $('#endDate').val();
+			var discount = $('#discount').val();
+			var typeOfTravel = $('#modalTypeOfTravel').val(); // Dodato prikupljanje vrednosti typeOfTravel
+			var selectedTravels = [];
+			$('input[name="travelDateIds"]:checked').each(function () {
+				selectedTravels.push($(this).val());
+			});
+
+			// Provera formata datuma
+			if (!startDate.match(/^\d{4}-\d{2}-\d{2}$/) || (endDate && !endDate.match(/^\d{4}-\d{2}-\d{2}$/))) {
+				alert('Datum mora biti u formatu YYYY-MM-DD');
+				return;
+			}
+
+			// Slanje AJAX zahteva
+			$.ajax({
+				type: 'POST',
+				url: '/PrviMavenVebProjekat/specialDates/add',
+				data: {
+					filterOptions: filterOptions,
+					startDate: startDate,
+					endDate: endDate,
+					discount: discount,
+					typeOfTravel: typeOfTravel, // Dodato prosleđivanje typeOfTravel vrednosti
+					travelDateIds: selectedTravels // promenjeno sa 'travelIds' na 'travelDateIds'
+				},
+				traditional: true, // Omogućava slanje niza kao zasebnih parametara
+				success: function(response) {
+					console.log("Response:", response);
+					$('#travelCards').empty();
+					$('#travelCards').append(response);
+
+					// Update the discounts dynamically if necessary
+					response.travelDates.forEach(function(travelDate) {
+						var card = $('#travel_' + travelDate.id); // Assuming the card has an ID like travel_6
+						if (card.length > 0) {
+							var discountText = 'Discount: ' + travelDate.discount + '%'; // Example text
+							card.find('.discount-info').text(discountText); // Assuming you have a span or div with class 'discount-info'
+						}
+					});
+
+					$('#specialDatesModal').modal('hide');
+				},
+				error: function(xhr, status, error) {
+					console.error("Error response:", xhr.responseText);
+					alert('Došlo je do greške prilikom dodavanja specijalnog datuma.');
+				}
+			});
+		});
+	});
+</script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{travel.details.title}">Travel Details</title>
+    <base th:href="@{/}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <style>
+        header {
+            background-color: #06324f;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .card-img-top {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card-img-travel {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .smanjena-slika {
+            width: 50%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .container {
+            position: relative;
+            top: 60px;
+            max-width: 400px;
+            margin-bottom: 50px;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            transform: scale(0.8);
+        }
+
+        .card {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-text {
+            font-size: 0.875rem;
+        }
+
+        .add-to-cart-btn {
+            background-color: #AB98B1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .travel-date {
+            border: 1px solid #dddddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/users}" class="text-white" th:text="#{users}">Users</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels}" class="text-white" th:text="#{travels}">Travels</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels/add}" class="text-white" th:text="#{addTravel}">Add Travel</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations}">Destinations</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles}">Vehicles</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/accUnits}" class="text-white" th:text="#{accUnits}">Acc. Units</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard}">Loyalty Card</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCards}">Loyalty Cards</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/cart/view}" class="text-white" th:text="#{shoppingCart}">Shopping Cart</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/reservations/requests}" class="text-white" th:text="#{reservationRequests}">Reservation Requests</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/reports}" class="text-white" th:text="#{reports}">Reports</a>
+        </button>
+
+    </div>
+    <div>
+        <form th:action="@{/changeLanguage}" method="get" class="language-form">
+            <select name="lang" class="form-control" onchange="this.form.submit()">
+                <option value="en" th:text="#{languageEnglish}" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="sr" th:text="#{languageSerbian}" th:selected="${#locale.language == 'sr'}">Srpski</option>
+            </select>
+        </form>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login}">Login</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:href="@{/users/logout}" class="text-white" th:text="#{logout}">Logout</a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/add}" class="text-white" th:text="#{register}">Register</a>
+        </button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <img th:src="@{'/images/' + ${putovanje.destinacija.slika}}" class="card-img-top smanjena-slika" alt="Destinacija slika">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${putovanje.destinacija.grad}"></h5>
+            <p class="card-text">
+                <span th:text="#{travel.details.country}">Država:</span> <span th:text="${putovanje.destinacija.drzava}"></span><br>
+                <span th:text="#{travel.details.continent}">Kontinent:</span> <span th:text="${putovanje.destinacija.kontinent}"></span><br>
+                <span th:text="#{travel.details.vehicle}">Vozilo:</span> <span th:text="${putovanje.vehicle.name}"></span><br>
+                <span th:text="#{travel.details.accommodation}">Smestaj:</span> <span th:text="${putovanje.accUnit.typeOfAccommodationUnit}"></span><br>
+                <span th:text="#{travel.details.type}">Tip putovanja:</span> <span th:text="${putovanje.typeOfTravel}"></span><br>
+            <div th:each="travelDate : ${putovanje.travelDates}"
+                 th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger() ? travelDate.numberOfFreeSeats > 0 : true}"
+                 class="travel-date">
+                <span th:text="#{travel.details.arrival}">Dolazak:</span>
+                <span th:text="${travelDate.formattedArrivalDate}"></span><br>
+                <span th:text="#{travel.details.departure}">Datum polaska:</span>
+                <span th:text="${travelDate.formattedDepartureDate}"></span><br>
+                <span th:text="#{travel.details.nights}">Broj noćenja:</span>
+                <span th:text="${travelDate.numberOfNights}"></span><br>
+                <span th:text="#{travel.details.freeSeats}">Broj slobodnih mesta:</span>
+                <span th:text="${travelDate.numberOfFreeSeats}"></span><br>
+            </div>
+
+            <!-- Iteriranje kroz sve travelDates kako bismo prikazali cenu sa popustom ili bez popusta -->
+            <div th:each="travelDate : ${travelDates}" th:if="${travelDate.travelId == putovanje.id}" class="travel-date">
+                <!-- Prikaz cene sa popustom ako postoji i nije nula -->
+                <span th:if="${travelDate.discount != null && travelDate.discount != 0}"
+                      th:text="'Cena po osobi sa popustom: ' + ${#numbers.formatDecimal(travelDate.discountPrice, 1, 2)} + ' $'"></span>
+                <!-- Prikaz originalne cene po osobi ako nema popusta ili je popust nula -->
+                <span th:if="${travelDate.discount == null || travelDate.discount == 0}"
+                      th:text="'Cena po osobi: ' + ${#numbers.formatDecimal((putovanje.price * travelDate.numberOfNights), 1, 2)} + ' $'"></span>
+            </div>
+
+
+            </p>
+
+            <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="add-to-cart-btn" data-toggle="modal" data-target="#wishListModal" th:text="#{travel.details.addToWishList}">
+                Add to wish list
+            </button>
+
+            <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="add-to-cart-btn" data-toggle="modal" data-target="#cartModal" th:text="#{travel.details.addToCart}">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="wishListModal" tabindex="-1" role="dialog" aria-labelledby="wishListModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="wishListModalLabel" th:text="#{wishList.modal.title}">Add to Wish List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="wishListForm" th:action="@{/wishList/add}" method="post">
+                    <input type="hidden" name="userId" th:value="${session.LOGGED_IN_USER != null ? session.LOGGED_IN_USER.id : ''}" />
+                    <input type="hidden" name="travelId" th:value="${putovanje.id}" />
+                    <div th:each="travelDate : ${putovanje.travelDates}"
+                         th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger() ? travelDate.numberOfFreeSeats > 0 : true}">
+                        <input type="radio" th:id="'travelDate-' + ${travelDate.id}" name="travelDateId" th:value="${travelDate.id}" required>
+                        <label th:for="'travelDate-' + ${travelDate.id}" th:text="'#{travel.details.arrival} ' + ${travelDate.formattedArrivalDate} + ', #{travel.details.departure} ' + ${travelDate.formattedDepartureDate}"></label><br>
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfPassengers" th:text="#{travel.details.numberOfPassengers}">Number of Passengers</label>
+                        <input type="number" class="form-control" id="numberOfPassengers" name="numberOfPassengers" min="1" required>
+                        <small id="passengerWarning" class="text-danger" style="display: none;" th:text="#{travel.details.passengerWarning}">Number of passengers exceeds available seats/beds.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalPrice" th:text="#{travel.details.totalPrice}">Total Price</label>
+                        <input type="number" class="form-control" id="totalPrice" name="totalPrice" step="0.01" required readonly>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{modal.close}">Close</button>
+                        <button type="button" class="add-to-cart-btn" onclick="calculateTotalPrice()" th:text="#{modal.finalPrice}">Final Price</button>
+                        <button type="submit" class="add-to-cart-btn" th:text="#{wishList.addToWishList}">Add to Wish List</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel" th:text="#{cart.modal.title}">Add to Cart</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="cartForm" th:action="@{/cart/add}" method="post" onsubmit="return validateInput()">
+                    <input type="hidden" name="userId" th:value="${session.LOGGED_IN_USER != null ? session.LOGGED_IN_USER.id : ''}" />
+                    <input type="hidden" name="travelId" th:value="${putovanje.id}" />
+                    <div th:each="travelDate : ${putovanje.travelDates}"
+                         th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger() ? travelDate.numberOfFreeSeats > 0 : true}">
+                        <input type="radio" th:id="'cartDate-' + ${travelDate.id}" name="travelDateId" th:value="${travelDate.id}" required>
+                        <label th:for="'cartDate-' + ${travelDate.id}"
+                               th:utext="'<span>' + #{travel.details.arrival} + ' </span>' + ${travelDate.formattedArrivalDate} + ', <span>' + #{travel.details.departure} + ' </span>' + ${travelDate.formattedDepartureDate}"></label><br>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfPassengersCart" th:text="#{travel.details.numberOfPassengers}">Number of Passengers</label>
+                        <input type="number" class="form-control" id="numberOfPassengersCart" name="numberOfPassengers" min="1" required>
+                        <small id="passengerWarningCart" class="text-danger" style="display: none;" th:text="#{travel.details.passengerWarning}">Number of passengers exceeds available seats/beds.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalPriceCart" th:text="#{travel.details.totalPrice}">Total Price</label>
+                        <input type="number" class="form-control" id="totalPriceCart" name="totalPrice" step="0.01" required readonly>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{modal.close}">Close</button>
+                        <button type="button" class="add-to-cart-btn" onclick="calculateTotalPriceCart()" th:text="#{modal.finalPrice}">Final Price</button>
+                        <button type="submit" class="add-to-cart-btn" th:text="#{cart.addToCart}">Add to Cart</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-danger" th:if="${errorMessage}">
+    <span th:text="${errorMessage}"></span>
+</div>
+
+<footer>
+    © 2024 Travel agency
+</footer>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDzwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script th:inline="javascript">
+    function calculateTotalPrice() {
+        const numberOfPassengers = parseInt(document.getElementById("numberOfPassengers").value, 10);
+        const travelDateId = document.querySelector('input[name="travelDateId"]:checked');
+        const pricePerPersonPerDay = /*[[${putovanje.price}]]*/ 0;
+
+        if (travelDateId) {
+            const travelDate = /*[[${putovanje.travelDates}]]*/ [];
+            const selectedDate = travelDate.find(td => td.id == travelDateId.value);
+            const numberOfNights = selectedDate ? selectedDate.numberOfNights : 0;
+            const availableSeats = selectedDate ? selectedDate.numberOfFreeSeats : 0;
+            const availableBeds = selectedDate ? selectedDate.numberOfFreeBeds : 0;
+
+            if (numberOfPassengers > availableSeats || numberOfPassengers > availableBeds) {
+                document.getElementById("passengerWarning").style.display = 'block';
+                document.getElementById("totalPrice").value = '';
+            } else {
+                document.getElementById("passengerWarning").style.display = 'none';
+                const totalPrice = numberOfPassengers * pricePerPersonPerDay * numberOfNights;
+                document.getElementById("totalPrice").value = totalPrice.toFixed(2);
+            }
+        } else {
+            alert("Please select a travel date.");
+        }
+    }
+
+</script>
+<script th:inline="javascript">
+    function calculateTotalPriceCart() {
+        const numberOfPassengers = parseInt(document.getElementById("numberOfPassengersCart").value, 10);
+        const travelDateId = document.querySelector('input[name="travelDateId"]:checked');
+        const pricePerPersonPerDay = /*[[${putovanje.price}]]*/ 0;
+
+        if (travelDateId) {
+            const travelDate = /*[[${putovanje.travelDates}]]*/ [];
+            const selectedDate = travelDate.find(td => td.id == travelDateId.value);
+            const numberOfNights = selectedDate ? selectedDate.numberOfNights : 0;
+            const availableSeats = selectedDate ? selectedDate.numberOfFreeSeats : 0;
+            const availableBeds = selectedDate ? selectedDate.numberOfFreeBeds : 0;
+
+            if (numberOfPassengers > availableSeats || numberOfPassengers > availableBeds) {
+                document.getElementById("passengerWarningCart").style.display = 'block';
+                document.getElementById("totalPriceCart").value = '';
+            } else {
+                document.getElementById("passengerWarningCart").style.display = 'none';
+                const totalPrice = numberOfPassengers * pricePerPersonPerDay * numberOfNights;
+                document.getElementById("totalPriceCart").value = totalPrice.toFixed(2);
+            }
+        } else {
+            alert("Please select a travel date.");
+        }
+    }
+</script>
+<script>
+    function validateInput() {
+        const numberOfPassengers = parseInt(document.getElementById("numberOfPassengersCart").value, 10);
+        const maxPassengers = 100;  // Postavite maksimalan broj putnika po potrebi
+        const minPassengers = 1;    // Minimalan broj putnika
+
+        if (isNaN(numberOfPassengers) || numberOfPassengers < minPassengers || numberOfPassengers > maxPassengers) {
+            alert("Uneli ste nevalidan broj putnika. Molimo pokušajte ponovo.");
+            return false;
+        }
+
+        return true;  // Ako su unosi validni
+    }
+
+</script>
+
+</body>
+</html>

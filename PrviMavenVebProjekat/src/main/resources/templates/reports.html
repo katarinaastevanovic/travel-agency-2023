@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{reports.title}">Reservation Reports</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        header {
+            background-color: #AB98B1;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .sort-btn {
+            background-color: #AB98B1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels/add}" class="text-white" th:text="#{travels.add}">Add Travel</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/accUnits}" class="text-white" th:text="#{accommodationUnits.link}">Acc. Units</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+        </button>
+    </div>
+</header>
+<div class="container" style="margin-top: 80px;">
+    <h2 style="text-align: center;" th:text="#{reports.title}">Reports</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="sortColumn" th:text="#{reports.sortColumn.label}">Sort by:</label>
+            <select id="sortColumn" name="sortColumn" class="form-control">
+                <option value="travelId" th:text="#{reports.sortColumn.travelId}">Travel ID</option>
+                <option value="grad" th:text="#{reports.sortColumn.destinationCity}">Destination City</option>
+                <option value="vehicleName" th:text="#{reports.sortColumn.vehicleName}">Vehicle Name</option>
+                <option value="nos" th:text="#{reports.sortColumn.numberOfSeats}">Number Of Seats</option>
+                <option value="soldSeats" th:text="#{reports.sortColumn.soldSeats}">Sold Seats</option>
+                <option value="totalPrice" th:text="#{reports.sortColumn.totalPrice}">Total Price</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="sortOrder" th:text="#{reports.sortOrder.label}">Order:</label>
+            <select id="sortOrder" name="sortOrder" class="form-control">
+                <option value="asc" th:text="#{reports.sortOrder.ascending}">Ascending</option>
+                <option value="desc" th:text="#{reports.sortOrder.descending}">Descending</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="sort-btn" onclick="sortReports()" th:text="#{reports.sortButton}">Sort</button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="fromDate" th:text="#{reports.fromDate.label}">From Date:</label>
+            <input type="date" id="fromDate" name="fromDate" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label for="toDate" th:text="#{reports.toDate.label}">To Date:</label>
+            <input type="date" id="toDate" name="toDate" class="form-control">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="sort-btn" onclick="filterReports()" th:text="#{reports.filterButton}">Filter</button>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th th:text="#{reports.table.travelId}">Travel ID</th>
+            <th th:text="#{reports.table.destinationCity}">Destination City</th>
+            <th th:text="#{reports.table.vehicleName}">Vehicle Name</th>
+            <th th:text="#{reports.table.numberOfSeats}">Number Of Seats</th>
+            <th th:text="#{reports.table.soldSeats}">Sold Seats</th>
+            <th th:text="#{reports.table.totalPrice}">Total Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="reservation : ${reservations}">
+            <td th:text="${reservation['travelId']}"></td>
+            <td>
+                <a th:href="@{|/details?id=${reservation['travelId']}|}" th:text="${reservation['grad']}"></a>
+            </td>
+            <td th:text="${reservation['vehicleName']}"></td>
+            <td th:text="${reservation['nos']}"></td>
+            <td th:text="${reservation['soldSeats']}"></td>
+            <td th:text="${reservation['totalPrice']}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <p><strong th:text="#{reports.totalSoldTrips}">Total Sold Trips:</strong> <span th:text="${totalSoldTrips}"></span></p>
+        </div>
+        <div class="col-md-6">
+            <p><strong th:text="#{reports.totalPriceSum}">Total Price:</strong> <span th:text="${totalPriceSum}"></span> RSD</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2024 Travel agency
+</footer>
+
+<script>
+    function sortReports() {
+        const sortColumn = document.getElementById("sortColumn").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+        const url = `/PrviMavenVebProjekat/reports?sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
+        window.location.href = url;
+    }
+
+    function filterReports() {
+        const fromDate = document.getElementById("fromDate").value;
+        const toDate = document.getElementById("toDate").value;
+        const sortColumn = document.getElementById("sortColumn").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+        const url = `/PrviMavenVebProjekat/reports?sortColumn=${sortColumn}&sortOrder=${sortOrder}&fromDate=${fromDate}&toDate=${toDate}`;
+        window.location.href = url;
+    }
+</script>
+
+</body>
+</html>

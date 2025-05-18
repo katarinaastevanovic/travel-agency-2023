@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title th:text="#{users.title}">Users</title>
+	<base th:href="@{/}">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+		  crossorigin="anonymous">
+	<style>
+		header {
+			background-color: #AB98B1;
+			padding: 10px;
+			width: 100%;
+			position: fixed;
+			top: 0;
+			z-index: 1000;
+		}
+
+		footer {
+			background-color: #AB98B1;
+			padding: 10px;
+			color: #ffffff;
+			text-align: center;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		th, td {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		.home-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.home-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.profile-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.profile-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.content {
+			margin-top: 80px;
+		}
+
+		.search-form {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.search-form .form-inline {
+			display: flex;
+			align-items: center;
+		}
+
+		.search-form .form-group {
+			margin-right: 10px;
+		}
+
+		.search-form .form-control {
+			width: auto;
+		}
+
+		.search-form .btn {
+			margin-left: 10px;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('input[name="keyword"]').on('input', function() {
+				var keyword = $(this).val();
+				$.ajax({
+					url: '/users/search',
+					type: 'GET',
+					data: { keyword: keyword },
+					success: function(response) {
+						$('#userTable tbody').html(response);
+					}
+				});
+			});
+		});
+	</script>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3">
+	<div>
+		<a th:href="@{/}" class="home-icon-link">
+			<img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.users}" th:href="@{/users}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:text="#{users.travels}" th:href="@{/travels}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:text="#{users.addTravel}" th:href="@{/travels/add}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.destinations}" th:href="@{/destinacije}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.vehicles}" th:href="@{/vehicles}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.accUnits}" th:href="@{/accUnits}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:text="#{users.loyaltyCard}" th:href="@{/loyaltyCard}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:text="#{users.loyaltyCards}" th:href="@{/loyaltyCardRequests}" class="text-white"></a>
+		</button>
+	</div>
+	<div>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{users.login}" th:href="@{/users/loginForm}" class="text-white"></a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+			<a th:text="#{users.logout}" th:href="@{/users/logout}" class="text-white"></a>
+		</button>
+		<a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+			<img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:text="#{users.register}" th:href="@{/users/add}" class="text-white"></a>
+		</button>
+	</div>
+</header>
+
+<div class="content">
+	<div class="search-form">
+		<form th:action="@{/users}" method="get" class="form-inline">
+			<div class="form-group mb-2">
+				<select name="role" class="form-control" onchange="this.form.submit()">
+					<option value="" disabled selected th:text="#{users.selectRole}"></option>
+					<option th:each="role : ${T(com.ftn.PrviMavenVebProjekat.model.Role).values()}" th:value="${role.name()}" th:text="${role.name()}" th:selected="${selectedRole == role.name()}"></option>
+				</select>
+			</div>
+			<div class="form-group mb-2">
+				<input type="text" name="keyword" placeholder="Search" th:placeholder="#{users.search}" class="form-control" />
+			</div>
+		</form>
+		<form th:action="@{/users}" method="get" class="form-inline">
+			<div class="form-group mb-2 ml-2">
+				<select name="sortField" class="form-control" onchange="this.form.submit()">
+					<option value="" disabled th:text="#{users.selectField}"></option>
+					<option value="username" th:selected="${selectedSortField == 'username'}">Username</option>
+					<option value="uloga" th:selected="${selectedSortField == 'uloga'}">Role</option>
+				</select>
+			</div>
+			<div class="form-group mb-2 ml-2">
+				<select name="sortOrder" class="form-control" onchange="this.form.submit()">
+					<option value="" disabled th:text="#{users.selectOrder}"></option>
+					<option value="asc" th:selected="${selectedSortOrder == 'asc'}" th:text="#{users.ascending}">Ascending</option>
+					<option value="desc" th:selected="${selectedSortOrder == 'desc'}" th:text="#{users.descending}">Descending</option>
+				</select>
+			</div>
+		</form>
+	</div>
+
+	<table id="userTable" class="table table-striped table-bordered mx-auto">
+		<thead>
+		<tr>
+			<th th:text="#{users.serialNumber}">R.broj</th>
+			<th th:text="#{users.username}">Username</th>
+			<th th:text="#{users.name}">Name</th>
+			<th th:text="#{users.lastName}">Last name</th>
+			<th th:text="#{users.email}">Email</th>
+			<th th:text="#{users.registrationDate}">Registration date</th>
+			<th th:text="#{users.role}">Role</th>
+			<th th:text="#{users.action}">Action</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="itUser, status: ${users}">
+			<td th:text="${(status.index + 1) + '.'}"></td>
+			<td>
+				<a th:href="|users/details?id=${itUser.id}|" th:text="${itUser.username}"></a>
+			</td>
+			<td th:text="${itUser.name}"></td>
+			<td th:text="${itUser.lastName}"></td>
+			<td th:text="${itUser.email}"></td>
+			<td th:text="${itUser.dateOfReg}"></td>
+			<td th:text="${itUser.role}"></td>
+			<td>
+				<form method="post" th:action="@{/users/delete}" style="display: inline;">
+					<input type="submit" th:value="#{users.delete}" />
+					<input type="hidden" name="id" th:value="${itUser.id}" />
+				</form>
+				<form th:if="${!itUser.isBlocked && itUser.role.name() != 'ADMIN'}" method="post" th:action="@{/users/block}" style="display: inline;">
+					<input type="submit" th:value="#{users.block}" />
+					<input type="hidden" name="id" th:value="${itUser.id}" />
+				</form>
+				<form th:if="${itUser.isBlocked && itUser.role.name() != 'ADMIN'}" method="post" th:action="@{/users/unblock}" style="display: inline;">
+					<input type="submit" th:value="#{users.unblock}" />
+					<input type="hidden" name="id" th:value="${itUser.id}" />
+				</form>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<div class="d-flex justify-content-center">
+		<button class="btn btn-light mt-3 text-dark">
+			<a th:href="@{/users/add}" th:text="#{users.addUser}"></a>
+		</button>
+	</div>
+</div>
+
+<footer>
+	© 2024 Travel agency
+</footer>
+</body>
+</html>

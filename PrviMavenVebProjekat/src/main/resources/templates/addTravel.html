@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{addTravel.title}">Add Travel</title>
+    <base th:href="@{/}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <style>
+        header {
+            background-color: #06324f;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto 50px;
+        }
+
+        .btn-customm {
+            background-color: #AB98B1;
+            color: #E2E8F5;
+        }
+
+        .card {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .card-header, .card-text {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-group-half {
+            flex: 1;
+            min-width: calc(50% - 10px);
+        }
+
+        .form-group-full {
+            flex: 1 1 100%;
+        }
+    </style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+        </button>
+
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/accUnits}" class="text-white" th:text="#{accUnits.link}">Acc. Units</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+        </a>
+
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+        </button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-header" th:text="#{addTravel.title}">Add Travel</h2>
+        <form th:action="@{/travels/add}" method="post" class="card-body">
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="destinacija" th:text="#{destination.label}">Destination:</label>
+                    <select class="form-control" id="destinacija" name="destinacijaId" required th:onchange="changeDestinacija(this.value)">
+                        <option th:each="destinacija : ${destinacije}" th:value="${destinacija.id}" th:text="${destinacija.grad}" th:selected="${destinacija.id == selectedDestinacijaId}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="tipVozila" th:text="#{vehicle.label}">Vehicle:</label>
+                    <select class="form-control" id="tipVozila" name="vehicleId" required>
+                        <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.name}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="accunit" th:text="#{accommodationUnit.label}">Accommodation Unit:</label>
+                    <select class="form-control" id="accunit" name="accUnitId" required>
+                        <option th:each="accUnit : ${accUnits}" th:value="${accUnit.id}" th:text="${accUnit.namee}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="tipPutovanja" th:text="#{typeOfTravel.label}">Type Of Travel:</label>
+                    <select class="form-control" id="tipPutovanja" name="typeOfTravel" required>
+                        <option th:each="type : ${typesOfTravel}" th:value="${type}" th:text="${type}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="dolazak" th:text="#{arrival.label}">Arrival:</label>
+                    <input type="date" class="form-control" id="dolazak" name="arrivalDates" required>
+                </div>
+
+                <div class="form-group form-group-half">
+                    <label for="polazak" th:text="#{departure.label}">Departure:</label>
+                    <input type="date" class="form-control" id="polazak" name="departureDates" required>
+                </div>
+            </div>
+
+            <div id="additional-dates"></div>
+            <button type="button" class="btn btn-customm" onclick="addDateFields()">+</button>
+
+            <div class="form-group">
+                <label for="cena" th:text="#{price.label}">Price:</label>
+                <input type="number" class="form-control" id="cena" name="cena" required>
+            </div>
+
+            <div style="text-align: center;">
+                <button type="submit" class="btn btn-custom" th:text="#{addTravel.button}">Add Travel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<footer>
+    © 2024 Travel agency
+</footer>
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDzwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script th:inline="javascript">
+    var baseURL = /*[[${#httpServletRequest.contextPath}]]*/ '';
+    function changeDestinacija(destinacijaId) {
+        window.location.href = baseURL + '/travels/add?destinacijaId=' + destinacijaId;
+    }
+
+    function addDateFields() {
+        var container = document.getElementById("additional-dates");
+        var div = document.createElement("div");
+        div.classList.add("form-group");
+
+        var labelArrival = document.createElement("label");
+        labelArrival.setAttribute("for", "additionalDolazak");
+        labelArrival.textContent = /*[[#{additionalArrivalDate.label}]]*/ "Additional Arrival Date:";
+
+        var inputArrival = document.createElement("input");
+        inputArrival.setAttribute("type", "date");
+        inputArrival.setAttribute("class", "form-control");
+        inputArrival.setAttribute("name", "arrivalDates");
+        inputArrival.setAttribute("required", "required");
+
+        var labelDeparture = document.createElement("label");
+        labelDeparture.setAttribute("for", "additionalPolazak");
+        labelDeparture.textContent = /*[[#{additionalDepartureDate.label}]]*/ "Additional Departure Date:";
+
+        var inputDeparture = document.createElement("input");
+        inputDeparture.setAttribute("type", "date");
+        inputDeparture.setAttribute("class", "form-control");
+        inputDeparture.setAttribute("name", "departureDates");
+        inputDeparture.setAttribute("required", "required");
+
+        div.appendChild(labelArrival);
+        div.appendChild(inputArrival);
+        div.appendChild(labelDeparture);
+        div.appendChild(inputDeparture);
+        container.appendChild(div);
+    }
+</script>
+
+</body>
+</html>

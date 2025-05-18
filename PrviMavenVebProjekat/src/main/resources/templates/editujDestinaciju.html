@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title th:text="#{destination.title}">Destinacija</title>
+	<base th:href="@{/}">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+		  crossorigin="anonymous">
+	<style>
+		header {
+			background-color: #AB98B1;
+			padding: 10px;
+			width: 100%;
+			position: fixed;
+		}
+
+		footer {
+			background-color: #AB98B1;
+			padding: 10px;
+			color: #ffffff;
+			text-align: center;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		.card-img-top {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.card-img-link {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.card {
+			max-width: 500px;
+			margin: 10px auto;
+			border: 1px solid #dddddd;
+			padding: 10px;
+			transform: scale(0.8);
+		}
+
+		.card-body {
+			padding: 10px;
+		}
+
+		.card-title {
+			font-size: 1rem;
+		}
+
+		.card-text {
+			font-size: 0.75rem;
+		}
+
+		.home-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.home-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.profile-icon-link {
+			display: inline-block;
+			text-decoration: none;
+		}
+
+		.profile-icon {
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+
+		.content {
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+<body>
+<header class="d-flex justify-content-between align-items-center p-3"
+		style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+	<div>
+		<a th:href="@{/}" class="home-icon-link">
+			<img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+		</a>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/users}" class="text-white" th:text="#{users.link}">Users</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:href="@{/travels}" class="text-white" th:text="#{travels.link}">Travels</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+			<a th:href="@{/travels/add}" class="text-white" th:text="#{travels.add}">Add Travel</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/destinacije}" class="text-white" th:text="#{destinations.link}">Destinations</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/vehicles}" class="text-white" th:text="#{vehicles.link}">Vehicles</a>
+		</button>
+
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/accUnits}" class="text-white" th:text="#{accommodationUnits.link}">Acc. Units</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+			<a th:href="@{/loyaltyCard}" class="text-white" th:text="#{loyaltyCard.link}">Loyalty Card</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+			<a th:href="@{/loyaltyCardRequests}" class="text-white" th:text="#{loyaltyCardRequests.link}">Loyalty Cards</a>
+		</button>
+	</div>
+
+	<div>
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:href="@{/users/loginForm}" class="text-white" th:text="#{login.link}">Login</a>
+		</button>
+		<button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+			<a th:href="@{/users/logout}" class="text-white" th:text="#{logout.link}">Logout</a>
+		</button>
+		<a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+			<img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+		</a>
+
+		<button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+			<a th:href="@{/users/add}" class="text-white" th:text="#{register.link}">Register</a>
+		</button>
+	</div>
+</header>
+
+<div class="container content">
+	<div class="card mx-auto">
+		<h2 class="card-header text-center" th:text="#{destination.title}">Destinacija</h2>
+		<div class="card-body">
+			<form method="post" th:action="@{/destinacije/edit}" enctype="multipart/form-data">
+				<input type="hidden" name="id" th:value="${destinacija.id}">
+				<table class="table">
+					<tbody>
+					<tr>
+						<th class="text-center" th:text="#{current.image}">Trenutna slika</th>
+						<td class="text-center">
+							<img th:src="@{'/images/' + ${destinacija.slika}}" class="card-img-top card-img-link" alt="Slika putovanja">
+						</td>
+					</tr>
+					<tr>
+						<th class="text-center" th:text="#{new.image}">Nova slika</th>
+						<td class="text-center"><input type="file" name="novaSlika"></td>
+					</tr>
+					<tr>
+						<th class="text-center" th:text="#{table.city}">Grad</th>
+						<td class="text-center"><input type="text" name="grad" th:value="${destinacija.grad}"></td>
+					</tr>
+					<tr>
+						<th class="text-center" th:text="#{table.country}">Drzava</th>
+						<td class="text-center"><input type="text" name="drzava" th:value="${destinacija.drzava}"></td>
+					</tr>
+					<tr>
+						<th class="text-center" th:text="#{table.continent}">Kontinent</th>
+						<td class="text-center"><input type="text" name="kontinent" th:value="${destinacija.kontinent}"></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td class="text-center"><input type="submit" th:value="#{edit.button}"> </td>
+					</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<footer>
+	© 2024 Travel agency
+</footer>
+</body>
+</html>

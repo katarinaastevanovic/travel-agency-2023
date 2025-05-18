@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{loyaltyCard.title}">Travel Agency</title>
+    <base th:href="@{/}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        header {
+            background-color: #AB98B1;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+        }
+
+        footer {
+            background-color: #AB98B1;
+            padding: 10px;
+            color: #ffffff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            width: auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin-top: 160px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .card-img-top {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card-img-link {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .smanjena-slika {
+            width: 50%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .card {
+            max-width: 300px;
+            margin: 10px;
+            border: 1px solid #dddddd;
+        }
+
+        .card-body {
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+
+        .card-text {
+            font-size: 0.875rem;
+        }
+
+        .home-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .home-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .profile-icon-link {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .center-text {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="d-flex justify-content-between align-items-center p-3" style="background-color: #AB98B1; position: fixed; width: 100%; top: 0; z-index: 1000;">
+    <div>
+        <a th:href="@{/}" class="home-icon-link">
+            <img th:src="@{'/images/building.png'}" alt="Home" class="home-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.users}" th:href="@{/users}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.travels}" th:href="@{/travels}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isManager()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.addTravel}" th:href="@{/travels/add}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.destinations}" th:href="@{/destinacije}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.vehicles}" th:href="@{/vehicles}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.accUnits}" th:href="@{/accUnits}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isPassenger()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.loyaltyCard}" th:href="@{/loyaltyCard}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null && session.LOGGED_IN_USER.isAdmin()}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.loyaltyCards}" th:href="@{/loyaltyCardRequests}" class="text-white"></a>
+        </button>
+    </div>
+
+    <div>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.login}" th:href="@{/users/loginForm}" class="text-white"></a>
+        </button>
+        <button th:if="${session.LOGGED_IN_USER != null}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.logout}" th:href="@{/users/logout}" class="text-white"></a>
+        </button>
+        <a th:if="${session.LOGGED_IN_USER != null}" href="/PrviMavenVebProjekat/users/profile" class="profile-icon-link">
+            <img th:src="@{'/images/profile.png'}" alt="Profile" class="profile-icon">
+        </a>
+        <button th:if="${session.LOGGED_IN_USER == null}" class="btn btn-custom">
+            <a th:text="#{loyaltyCard.register}" th:href="@{/users/add}" class="text-white"></a>
+        </button>
+    </div>
+</header>
+
+<br>
+<br>
+<br>
+<h1 class="center-text" th:text="#{loyaltyCard.title}">LOYALTY CARD</h1>
+
+<div th:if="${message != null}">
+    <div class="alert alert-info" role="alert" th:text="${message}"></div>
+</div>
+
+<div th:if="${loyaltyCard == null && existingRequest == null}" class="text-center button-container">
+    <form th:action="@{/loyaltyCard/sendRequest}" method="post">
+        <button type="submit" class="btn-primary-custom" th:text="#{loyaltyCard.sendRequest}">Send Request</button>
+    </form>
+</div>
+
+<div th:if="${loyaltyCard != null}" class="table-container">
+    <table>
+        <tr>
+            <th th:text="#{loyaltyCard.points}">Points:</th>
+            <td th:text="${loyaltyCard.numberOfPoints}"></td>
+        </tr>
+        <tr>
+            <th th:text="#{loyaltyCard.discount}">Discount:</th>
+            <td th:text="${loyaltyCard.discount}"></td>
+        </tr>
+    </table>
+</div>
+
+<footer>
+    © 2024 Travel agency
+</footer>
+</body>
+</html>
